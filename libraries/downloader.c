@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <curl/curl.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "downloader.h"
 
@@ -17,28 +18,21 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
     return written;
 }
 
-
-
-
 static size_t write_data2(const char *buffer, size_t size, size_t nmemb, char *userp)
 {
-    char *string = userp;
+    //need to dynamically extend the array via realloc()
+
     size_t len;
     len = size * nmemb;
-    strncat(string, buffer,len); // I get segfault here. Why???? 
+    strncat(userp, buffer,len); 
     return len;
 }
-
-
-
-
 
 /*
 *   public functions
 */
 
-
-void DownloadVideo(char* url, char* savePath)
+void DownloadVideo(char* url, char* savePath) //todo provide savePath and filename separately
 {
     CURL* curl;
     FILE* fp;
@@ -62,22 +56,21 @@ void DownloadVideo(char* url, char* savePath)
     printf("%d",res);
 }
 
-void DownloadHtml(char* url)
+int DownloadHtml(char* url, char* vp)
 {
     CURL* curl;
-    char vp[1000000];
-    vp[0]='\0';
     CURLcode res;
     curl = curl_easy_init();
     if(curl) {
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data2);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, vp);
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
+        struct curl_slist* headers = NULL;
+        headers = curl_slist_append(headers,"User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         res = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
-        printf("%s",vp);
     }
-    return vp;
+    return res;
 }
-
-

@@ -2,6 +2,5 @@
 #define DOWNLOADER_H
 
 extern void DownloadVideo(char*,char*);
-extern void DownloadHtml(char*);
-
+extern int DownloadHtml(char*,char*);
 #endif

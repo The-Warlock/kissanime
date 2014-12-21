@@ -11,10 +11,26 @@
 */
 
 
-size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+static size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
+{
     size_t written = fwrite(ptr, size, nmemb, stream);
     return written;
 }
+
+
+
+
+static size_t write_data2(const char *buffer, size_t size, size_t nmemb, char *userp)
+{
+    char *string = userp;
+    size_t len;
+    len = size * nmemb;
+    strncat(string, buffer,len); // I get segfault here. Why???? 
+    return len;
+}
+
+
+
 
 
 /*
@@ -22,11 +38,12 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 */
 
 
-void DownloadVideo(char* url, char* savePath){
+void DownloadVideo(char* url, char* savePath)
+{
     CURL* curl;
     FILE* fp;
     CURLcode res;
-    char* outfilename = "test.mp4";
+    char* outfilename = savePath;
     if (strlen(outfilename) > FILENAME_MAX){
         printf("file path/ name too long");
         return;
@@ -45,7 +62,22 @@ void DownloadVideo(char* url, char* savePath){
     printf("%d",res);
 }
 
-char* DownloadHtml(char* url){
-    
+void DownloadHtml(char* url)
+{
+    CURL* curl;
+    char vp[1000000];
+    vp[0]='\0';
+    CURLcode res;
+    curl = curl_easy_init();
+    if(curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data2);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, vp);
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+        printf("%s",vp);
+    }
+    return vp;
 }
+
 

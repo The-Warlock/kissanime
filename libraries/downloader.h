@@ -1,6 +1,7 @@
 #ifndef DOWNLOADER_H
 #define DOWNLOADER_H
 
-void DownloadVideo(char*,char*);
+extern void DownloadVideo(char*,char*);
+extern void DownloadHtml(char*);
 
 #endif

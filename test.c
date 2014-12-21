@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <regex.h>
+
 #include "libraries/downloader.h"
+#include "libraries/kanime_parser.h"
 
 int main(){
 
@@ -18,18 +21,45 @@ int main(){
 
 /*
 *   DownloadHtml test
-*/
+*
     char *buffer = malloc(500000*sizeof(char));
     int status;
-    status = DownloadHtml("http://kissanime.com/Anime/Detective-Conan",buffer);
+    status = DownloadHtml("http://kissanime.com/Anime/Naruto-Shippuuden/Episode-388?id=82776",buffer);
     char html_data[strlen(buffer)];
     strcpy(html_data,buffer);
     free(buffer);
     printf("%lu",strlen(html_data));
-//    printf("%s",html_data);
+    printf("%s",html_data);
+*
+*
+*/
+
+
+/*
+*   parse_videolink | DownloadHTML -> parse_videolink
+*/
+    char *buffer = malloc(500000*sizeof(char));
+    int status;
+    status = DownloadHtml("http://kissanime.com/Anime/Naruto-Shippuuden/Episode-388?id=82776",buffer);
+    char html_data[strlen(buffer)];
+    strcpy(html_data,buffer);
+    free(buffer);
+
+    int b,e;
+    char* regex = "...): <a target=\"_blank\" href=\"([^\"]+)";
+    char *match=parse_videolink(html_data , regex,&b,&e);
+    printf("%s)\n",match);
+    int strl = strlen(match);
+    printf("%d",strl);
+    return 0;
+
 /*
 *
 */
 
-    return 0;
+
+
+
+
+return 0;
 }

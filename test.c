@@ -1,10 +1,12 @@
+// gcc -lcurl -Wall test.c libraries/*.c -o ../a.out
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <regex.h>
 
 #include "libraries/downloader.h"
-#include "libraries/kanime_parser.h"
+#include "libraries/parser.h"
 
 int main(){
 
@@ -45,12 +47,11 @@ int main(){
     strcpy(html_data,buffer);
     free(buffer);
 
-    int b,e;
     char* regex = "...): <a target=\"_blank\" href=\"([^\"]+)";
-    char *match=parse_videolink(html_data , regex,&b,&e);
-    printf("%s)\n",match);
-    int strl = strlen(match);
-    printf("%d",strl);
+    char* buffer2 = NULL;
+    status = parse_videolink(html_data,regex,&buffer2);
+    printf("%s\n",buffer2);
+    free(buffer2);
     return 0;
 
 /*

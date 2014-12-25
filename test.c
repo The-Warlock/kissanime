@@ -7,14 +7,57 @@
 
 #include "libraries/downloader.h"
 #include "libraries/parser.h"
+#include "libraries/db.h"
 
+void db_extract_names(char *buffer){
+	int i;
+	int state=1;
+	int amount=0;
+	for(i=0;i<strlen(buffer);i++){
+		if(buffer[i]==';')amount++;
+	}
+	for(i=0;i<strlen(buffer);i++){
+		if(buffer[i]==';') state=0;
+		if(state==1)printf("%c",buffer[i]);
+		if(buffer[i]=='\n') state=1;
+	}
+}
 
 int main(){
 
 /*
+*   file_read test
+*
+char* buffer = NULL;
+db_read("database.db",&buffer);
+free(buffer);
+*
+*
+*/
+
+/*
+*    file_extract_names test
+*/
+
+
+char* buffer = NULL;
+	db_read("database.db",&buffer);
+
+	db_extract_names(buffer);	
+	//printf("%s",
+	
+free(buffer);
+
+
+/*
+*
+*/
+
+ 
+/*
 *   parse_episode_links test
 *
-    char *buffer = malloc(500000*sizeof(char));
+   char *buffer = malloc(500000*sizeof(char));
     int status;
     status = DownloadHtml("http://kissanime.com/Anime/Detective-Conan",buffer);
     char html_data[strlen(buffer)];
